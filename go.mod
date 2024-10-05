@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/TheFranMan/tasker-common v0.0.0-20241004211807-274074b07171
 	github.com/caarlos0/env v3.5.0+incompatible
+	github.com/caarlos0/env/v11 v11.2.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/gorilla/mux v1.8.1

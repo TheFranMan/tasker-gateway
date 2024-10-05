@@ -8,18 +8,27 @@ import (
 
 	"gateway/application"
 	"gateway/common"
+	"gateway/repo"
 	"gateway/server"
 )
 
 func main() {
+	var err error
+
 	log.Info("Retrieving configuration")
-	cfg, err := common.GetConfig()
+	config, err := common.GetConfig()
 	if nil != err {
-		panic(fmt.Errorf("cannot get env variables: %w", err))
+		log.WithError(err).Panic("cannot get enviroment variables")
 	}
 
 	app := application.App{
-		Config: cfg,
+		Config: config,
+	}
+
+	log.Info("connecting to MYSQL db")
+	app.Repo, err = repo.New(config)
+	if nil != err {
+		log.WithError(err).Panic("cannot connect to MYSQL")
 	}
 
 	log.WithField("Port", app.Config.Port).Info("Starting server")
