@@ -13,15 +13,8 @@ var (
 	errSeraliseJSON   = "cannot seralise JSON response"
 	errDeleteSave     = "cannot save new deletion request"
 	errDeseraliseJSON = "cannot deseralise JSON body"
+	errInvalidID      = "invalid ID"
 )
-
-type DeleteParams struct {
-	ID int `json:"id"`
-}
-
-type TokenResponse struct {
-	Token string `json:"token"`
-}
 
 func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -35,7 +28,7 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !common.ValidID(deleteParams.ID) {
-		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		http.Error(w, errInvalidID, http.StatusBadRequest)
 		return
 	}
 
@@ -47,6 +40,7 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("Content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(TokenResponse{token})
 	if nil != err {
