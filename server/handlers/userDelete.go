@@ -40,7 +40,6 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("Content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(TokenResponse{token})
 	if nil != err {

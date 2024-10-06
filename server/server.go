@@ -8,6 +8,7 @@ import (
 
 	"gateway/application"
 	"gateway/server/handlers"
+	"gateway/server/middleware"
 )
 
 type Server struct {
@@ -18,6 +19,8 @@ func New(app *application.App) *Server {
 	h := handlers.New(app)
 
 	r := mux.NewRouter()
+	r.Use(middleware.Json)
+
 	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
 		fmt.Fprint(w, `{"status": "OK"}`)
