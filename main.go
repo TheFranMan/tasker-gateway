@@ -21,7 +21,7 @@ func main() {
 		log.WithError(err).Panic("cannot get enviroment variables")
 	}
 
-	app := application.App{
+	app := &application.App{
 		Config: config,
 	}
 
@@ -32,5 +32,5 @@ func main() {
 	}
 
 	log.WithField("Port", app.Config.Port).Info("Starting server")
-	panic(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.Port), server.NewServer()))
+	panic(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.Port), server.New(app)))
 }

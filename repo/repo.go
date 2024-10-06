@@ -10,7 +10,9 @@ import (
 	"gateway/common"
 )
 
-type Interface interface{}
+type Interface interface {
+	NewDelete(authToken string, id int) (string, error)
+}
 
 type Repo struct {
 	db *sqlx.DB
@@ -33,4 +35,7 @@ func New(config *common.Config) (*Repo, error) {
 	db.SetMaxOpenConns(30)
 
 	return &Repo{db}, nil
+}
+func (r *Repo) NewDelete(authToken string, id int) (string, error) {
+	return "new token", nil
 }
