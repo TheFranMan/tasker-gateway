@@ -35,7 +35,7 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !common.ValidID(deleteParams.ID) {
-		http.Error(w, "invalid ID", http.StatusBadRequest)
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
 		return
 	}
 
