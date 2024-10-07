@@ -1,10 +1,13 @@
 package repo
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/TheFranMan/tasker-common/types"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 
 	"gateway/common"
@@ -36,6 +39,30 @@ func New(config *common.Config) (*Repo, error) {
 
 	return &Repo{db}, nil
 }
+
 func (r *Repo) NewDelete(authToken string, id int) (string, error) {
-	return "new token", nil
+	uuid, err := uuid.NewRandom()
+	if nil != err {
+		return "", fmt.Errorf("cannot create new UUID: %w", err)
+	}
+
+	token := uuid.String()
+
+	b, err := json.Marshal(types.StepsDelete)
+	if nil != err {
+		return "", fmt.Errorf("cannot seralise steps: %w", err)
+	}
+
+	_, err = r.db.NamedExec("INSERT INTO requests (token, request_token, action, params, steps) VALUES (:token, :request_token, :action, :params, :steps)", map[string]interface{}{
+		"token":         token,
+		"request_token": authToken,
+		"action":        types.ActionDelete,
+		"params":        fmt.Sprintf(`{"id":%d}`, id),
+		"steps":         string(b),
+	})
+	if nil != err {
+		return "", err
+	}
+
+	return token, nil
 }

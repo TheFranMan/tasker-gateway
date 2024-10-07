@@ -32,19 +32,18 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	authToken := "test-token-delete"
-	token, err := h.app.Repo.NewDelete(authToken, deleteParams.ID)
+	token, err := h.app.Repo.NewDelete(r.Header.Get("Authorization"), deleteParams.ID)
 	if nil != err {
-		log.WithError(err).Error(errSeraliseJSON)
-		http.Error(w, errSeraliseJSON, http.StatusInternalServerError)
+		log.WithError(err).Error(errDeleteSave)
+		http.Error(w, errDeleteSave, http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(TokenResponse{token})
 	if nil != err {
-		log.WithError(err).Error(errDeleteSave)
-		http.Error(w, errDeleteSave, http.StatusInternalServerError)
+		log.WithError(err).Error(errSeraliseJSON)
+		http.Error(w, errSeraliseJSON, http.StatusInternalServerError)
 		return
 	}
 }
