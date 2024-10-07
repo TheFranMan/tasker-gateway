@@ -14,6 +14,7 @@ func setEnvs() {
 	os.Setenv("DB_HOST", "DB_HOST")
 	os.Setenv("DB_PORT", "1")
 	os.Setenv("DB_NAME", "DB_NAME")
+	os.Setenv("AUTH_TOKENS", "AUTH_TOKENS")
 }
 
 func unsetEnvs() {
@@ -23,6 +24,7 @@ func unsetEnvs() {
 	os.Unsetenv("DB_HOST")
 	os.Unsetenv("DB_PORT")
 	os.Unsetenv("DB_NAME")
+	os.Unsetenv("AUTH_TOKENS")
 }
 
 func TestConfig(t *testing.T) {

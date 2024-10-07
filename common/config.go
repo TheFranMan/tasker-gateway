@@ -25,6 +25,8 @@ type Config struct {
 	DbHost string `env:"DB_HOST,notEmpty"`
 	DbPort int    `env:"DB_PORT,notEmpty"`
 	DbName string `env:"DB_NAME,notEmpty"`
+
+	AuthTokens []string `env:"AUTH_TOKENS,notEmpty"`
 }
 
 func GetConfig() (*Config, error) {

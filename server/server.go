@@ -19,6 +19,9 @@ func New(app *application.App) *Server {
 	h := handlers.New(app)
 
 	r := mux.NewRouter()
+
+	auth := middleware.NewAuth(app.Config)
+	r.Use(auth.Guard)
 	r.Use(middleware.Json)
 
 	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
