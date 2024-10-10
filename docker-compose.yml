@@ -1,0 +1,33 @@
+name: "tasker"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p'password'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 3307:3306
+    volumes:
+      - db:/var/lib/mysql
+  gateway:
+    build: .
+    container_name: gateway
+    env_file:
+      - .env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - 3005:3005
+
+volumes:
+  db:
