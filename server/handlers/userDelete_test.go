@@ -34,7 +34,7 @@ func (s *Suite) Test_can_add_a_request() {
 	s.Require().Equal(http.StatusCreated, w.Result().StatusCode)
 
 	var requests []types.Request
-	err = s.db.Select(&requests, "SELECT token, request_token, params, action, status FROM requests")
+	err = s.db.Select(&requests, "SELECT token, request_token, params, action, steps, status FROM requests")
 	s.Require().Nil(err)
 	s.Require().Len(requests, 1)
 
@@ -46,6 +46,7 @@ func (s *Suite) Test_can_add_a_request() {
 		Token:        tr.Token,
 		RequestToken: "test-token",
 		Action:       string(types.ActionDelete),
+		Steps:        types.StepsDelete,
 		Params: types.Params{
 			ID: 1,
 		},
