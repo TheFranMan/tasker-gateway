@@ -3,7 +3,7 @@ module gateway
 go 1.23.0
 
 require (
-	github.com/TheFranMan/tasker-common v0.0.0-20241010151339-d8fa56a420f7
+	github.com/TheFranMan/tasker-common v0.0.0-20241011230400-1d8020aff2ba
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-migrate/migrate/v4 v4.18.1

@@ -22,13 +22,13 @@ func New(app *application.App) *Server {
 
 	auth := middleware.NewAuth(app.Config)
 	r.Use(auth.Guard)
-	r.Use(middleware.Json)
 
 	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("content-type", "application/json")
 		fmt.Fprint(w, `{"status": "OK"}`)
 	})
 	r.HandleFunc("/user", h.UserDelete).Methods(http.MethodDelete)
+	r.HandleFunc("/status/{token}", h.Status).Methods(http.MethodGet)
 
 	return &Server{
 		router: r,
