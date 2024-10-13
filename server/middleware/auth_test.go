@@ -12,6 +12,7 @@ import (
 func Test_auth(t *testing.T) {
 	testValidToken := "valid-token"
 	testInvalidToken := "invalid-token"
+	testValidWhitelist := "/whitelist"
 
 	for name, test := range map[string]struct {
 		want int
@@ -43,11 +44,19 @@ func Test_auth(t *testing.T) {
 				req.Header.Set("Authorization", testValidToken)
 				return req
 			}},
+		"whitelist bypasses auth": {
+			want: http.StatusOK,
+			req: func() *http.Request {
+				req := httptest.NewRequest(http.MethodGet, testValidWhitelist, nil)
+				req.Header.Set("Authorization", testValidToken)
+				return req
+			}},
 	} {
 		t.Run(name, func(t *testing.T) {
 			auth := NewAuth(&common.Config{
 				AuthTokens: []string{testValidToken},
 			})
+			auth.whitelist = []string{testValidWhitelist}
 
 			testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
