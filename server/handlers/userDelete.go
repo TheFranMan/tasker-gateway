@@ -14,10 +14,16 @@ var (
 	errDeleteSave     = "cannot save new deletion request"
 	errDeseraliseJSON = "cannot deseralise JSON body"
 	errInvalidID      = "invalid ID"
+	errContentType    = "invalid content type"
 )
 
 func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
+
+	if "application/json" != r.Header.Get("Content-Type") {
+		http.Error(w, errContentType, http.StatusUnsupportedMediaType)
+		return
+	}
 
 	var deleteParams DeleteParams
 	err := json.NewDecoder(r.Body).Decode(&deleteParams)
@@ -39,6 +45,7 @@ func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(TokenResponse{token})
 	if nil != err {

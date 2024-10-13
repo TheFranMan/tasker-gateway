@@ -28,6 +28,7 @@ func (s *Suite) Test_can_add_a_request() {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte(`{"id": 1}`)))
 	r.Header.Set("Authorization", "test-token")
+	r.Header.Set("Content-Type", "application/json")
 
 	h.UserDelete(w, r)
 
