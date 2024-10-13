@@ -15,6 +15,7 @@ import (
 
 type Interface interface {
 	NewDelete(authToken string, id int) (string, error)
+	GetStatus(token string) (types.RequestStatus, error)
 }
 
 type Repo struct {
@@ -80,4 +81,14 @@ func (r *Repo) NewDelete(authToken string, id int) (string, error) {
 	}
 
 	return token, nil
+}
+
+func (r *Repo) GetStatus(token string) (types.RequestStatus, error) {
+	var status types.RequestStatus
+	err := r.db.Get(&status, "SELECT status FROM requests WHERE token = ?", token)
+	if nil != err {
+		return -1, err
+	}
+
+	return status, nil
 }
