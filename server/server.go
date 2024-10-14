@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"gateway/application"
 	"gateway/server/handlers"
@@ -22,6 +23,7 @@ func New(app *application.App) *Server {
 	auth := middleware.NewAuth(app.Config)
 	r.Use(auth.Guard)
 
+	r.Handle("/metrics", promhttp.Handler())
 	r.HandleFunc("/heartbeat", func(w http.ResponseWriter, r *http.Request) {})
 	r.HandleFunc("/user", h.UserDelete).Methods(http.MethodDelete)
 	r.HandleFunc("/status/{token}", h.Status).Methods(http.MethodGet)

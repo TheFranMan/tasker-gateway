@@ -14,7 +14,7 @@ type Auth struct {
 func NewAuth(config *common.Config) Auth {
 	return Auth{
 		tokens:    config.AuthTokens,
-		whitelist: []string{"/heartbeat"},
+		whitelist: []string{"/heartbeat", "/metrics"},
 	}
 }
 
