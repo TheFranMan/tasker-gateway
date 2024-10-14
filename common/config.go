@@ -29,7 +29,7 @@ type Config struct {
 
 	AuthTokens []string `env:"AUTH_TOKENS,notEmpty"`
 
-	RedisAddr   string        `env:"REDIS_ADDR.notEmpty"`
+	RedisAddr   string        `env:"REDIS_ADDR,notEmpty"`
 	RedisKeyTtl time.Duration `env:"REDIS_KEY_TTL" envDefault:"30s"`
 }
 

@@ -19,8 +19,11 @@ services:
     image: redis:7
     container_name: redis
     restart: always
-    ports:
-      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 2s
+      retries: 10
   gateway:
     build: .
     container_name: gateway
@@ -29,8 +32,11 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
+      REDIS_ADDR: cache:6379
     depends_on:
       mysql:
+        condition: service_healthy
+      cache:
         condition: service_healthy
     ports:
       - 3005:3005
