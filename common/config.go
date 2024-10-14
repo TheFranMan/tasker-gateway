@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 	_ "github.com/joho/godotenv/autoload"
@@ -27,6 +28,9 @@ type Config struct {
 	DbName string `env:"DB_NAME,notEmpty"`
 
 	AuthTokens []string `env:"AUTH_TOKENS,notEmpty"`
+
+	RedisAddr   string        `env:"REDIS_ADDR.notEmpty"`
+	RedisKeyTtl time.Duration `env:"REDIS_KEY_TTL" envDefault:"30s"`
 }
 
 func GetConfig() (*Config, error) {

@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"gateway/application"
+	"gateway/cache"
 	"gateway/common"
 	"gateway/repo"
 	"gateway/server"
@@ -30,6 +31,9 @@ func main() {
 	if nil != err {
 		log.WithError(err).Panic("cannot connect to MYSQL")
 	}
+
+	log.WithField("ttl", config.RedisKeyTtl).Info("Connecting to Cache")
+	app.Cache = cache.New(config)
 
 	log.WithField("Port", app.Config.Port).Info("Starting server")
 	panic(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.Port), server.New(app)))
