@@ -2,4 +2,5 @@
 .env
 go.work
 go.work.sum
+__pycache__
 gateway
