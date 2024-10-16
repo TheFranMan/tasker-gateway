@@ -12,7 +12,7 @@ type writerRecorder struct {
 	statusCode int
 }
 
-func (wr writerRecorder) WriteHeader(code int) {
+func (wr *writerRecorder) WriteHeader(code int) {
 	wr.statusCode = code
 	wr.ResponseWriter.WriteHeader(code)
 }
