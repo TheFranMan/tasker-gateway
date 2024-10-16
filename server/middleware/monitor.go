@@ -36,6 +36,10 @@ func (m *Monitor) Record(next http.Handler) http.Handler {
 			path = "/status"
 		}
 
+		if "/metrics" == path {
+			return
+		}
+
 		m.app.Monitor.PathStatusCode(path, wr.statusCode)
 	})
 }
