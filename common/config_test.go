@@ -15,6 +15,7 @@ func setEnvs() {
 	os.Setenv("DB_PORT", "1")
 	os.Setenv("DB_NAME", "DB_NAME")
 	os.Setenv("AUTH_TOKENS", "AUTH_TOKENS")
+	os.Setenv("REDIS_ADDR", "REDIS_ADDR")
 }
 
 func unsetEnvs() {
@@ -25,6 +26,7 @@ func unsetEnvs() {
 	os.Unsetenv("DB_PORT")
 	os.Unsetenv("DB_NAME")
 	os.Unsetenv("AUTH_TOKENS")
+	os.Unsetenv("REDIS_ADDR")
 }
 
 func TestConfig(t *testing.T) {
