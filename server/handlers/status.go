@@ -57,6 +57,11 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if -1 == responseStatus {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	status = string(getRequestStatusString(responseStatus))
 
 	err = h.app.Cache.SetKey(token, status)

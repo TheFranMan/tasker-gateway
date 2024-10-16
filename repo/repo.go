@@ -1,7 +1,9 @@
 package repo
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -87,6 +89,10 @@ func (r *Repo) GetStatus(token string) (types.RequestStatus, error) {
 	var status types.RequestStatus
 	err := r.db.Get(&status, "SELECT status FROM requests WHERE token = ?", token)
 	if nil != err {
+		if errors.Is(err, sql.ErrNoRows) {
+			return -1, nil
+		}
+
 		return -1, err
 	}
 
