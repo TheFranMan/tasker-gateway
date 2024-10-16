@@ -27,7 +27,7 @@ func main() {
 		Config: config,
 	}
 
-	log.Info("connecting to MYSQL db")
+	log.Info("Connecting to MYSQL")
 	app.Repo, err = repo.New(config)
 	if nil != err {
 		log.WithError(err).Panic("cannot connect to MYSQL")
