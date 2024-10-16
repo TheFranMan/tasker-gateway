@@ -9,6 +9,7 @@ import (
 	"gateway/application"
 	"gateway/cache"
 	"gateway/common"
+	"gateway/monitor"
 	"gateway/repo"
 	"gateway/server"
 )
@@ -31,6 +32,9 @@ func main() {
 	if nil != err {
 		log.WithError(err).Panic("cannot connect to MYSQL")
 	}
+
+	log.Info("Starting Monitor")
+	app.Monitor = monitor.New()
 
 	log.WithField("ttl", config.RedisKeyTtl).Info("Connecting to Cache")
 	app.Cache = cache.New(config)

@@ -21,7 +21,10 @@ func New(app *application.App) *Server {
 	r := mux.NewRouter()
 
 	auth := middleware.NewAuth(app.Config)
+	monitor := middleware.NewMonitor(app)
+
 	r.Use(auth.Guard)
+	r.Use(monitor.Record)
 
 	r.Handle("/metrics", promhttp.Handler())
 	r.HandleFunc("/heartbeat", func(w http.ResponseWriter, r *http.Request) {})
