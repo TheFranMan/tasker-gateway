@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"slices"
 	"strings"
 
 	"gateway/application"
@@ -18,11 +19,15 @@ func (wr *writerRecorder) WriteHeader(code int) {
 }
 
 type Monitor struct {
-	app *application.App
+	app       *application.App
+	whitelist []string
 }
 
 func NewMonitor(app *application.App) Monitor {
-	return Monitor{app}
+	return Monitor{
+		app:       app,
+		whitelist: []string{"/metrics"},
+	}
 }
 
 func (m *Monitor) Record(next http.Handler) http.Handler {
@@ -36,7 +41,7 @@ func (m *Monitor) Record(next http.Handler) http.Handler {
 			path = "/status"
 		}
 
-		if "/metrics" == path {
+		if slices.Contains(m.whitelist, path) {
 			return
 		}
 
