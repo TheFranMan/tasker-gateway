@@ -9,3 +9,7 @@ type Mock struct {
 func (m *Mock) PathStatusCode(path string, code int) {
 	m.Called(path, code)
 }
+
+func (m *Mock) PathStatusCached() {
+	m.Called()
+}

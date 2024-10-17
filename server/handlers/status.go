@@ -42,6 +42,8 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 	if "" != status {
 		l.WithField("status", status).Debug("Cache hit")
 
+		h.app.Monitor.PathStatusCached()
+
 		err = sendResponse(w, status)
 		if nil != err {
 			http.Error(w, errStatusResponse, http.StatusInternalServerError)
