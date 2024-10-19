@@ -12,11 +12,11 @@ import (
 )
 
 var (
-	errMsgInvalidToken = "Invalid token"
-	errGetStatus       = "cannot retrieve status from token"
-	errStatusResponse  = "cannot marshall token status reponse"
-	errMsgCacheSave    = "cannot save to the cache"
-	errMsgCacheGet     = "cannot retrieve from the cache"
+	errMsgInvalidToken   = "Invalid token"
+	errMsgStatusGet      = "cannot retrieve status from token"
+	errMsgResponseStatus = "cannot marshall token status reponse"
+	errMsgCacheSave      = "cannot save to the cache"
+	errMsgCacheGet       = "cannot retrieve from the cache"
 )
 
 type statusResponse struct {
@@ -47,7 +47,7 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 
 		err = sendResponse(w, *status)
 		if nil != err {
-			http.Error(w, errStatusResponse, http.StatusInternalServerError)
+			http.Error(w, errMsgResponseStatus, http.StatusInternalServerError)
 		}
 
 		return
@@ -55,7 +55,7 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 
 	status, err = h.app.Repo.GetStatus(token)
 	if nil != err {
-		l.WithError(err).Error(errGetStatus)
+		l.WithError(err).Error(errMsgStatusGet)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -74,8 +74,8 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 
 	err = sendResponse(w, *status)
 	if nil != err {
-		l.WithError(err).Error(errStatusResponse)
-		http.Error(w, errStatusResponse, http.StatusInternalServerError)
+		l.WithError(err).Error(errMsgResponseStatus)
+		http.Error(w, errMsgResponseStatus, http.StatusInternalServerError)
 	}
 }
 
