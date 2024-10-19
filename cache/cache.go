@@ -5,14 +5,15 @@ import (
 	"errors"
 	"time"
 
+	"github.com/TheFranMan/tasker-common/types"
 	"github.com/redis/go-redis/v9"
 
 	"gateway/common"
 )
 
 type Interface interface {
-	GetKey(key string) (string, error)
-	SetKey(name string, value interface{}) error
+	GetKey(key string) (*types.RequestStatusString, error)
+	SetKey(key string, value types.RequestStatusString) error
 }
 
 type Cache struct {
@@ -31,19 +32,20 @@ func New(config *common.Config) *Cache {
 	}
 }
 
-func (c *Cache) SetKey(name string, value interface{}) error {
-	return c.client.Set(context.Background(), name, value, c.ttl).Err()
+func (c *Cache) SetKey(key string, value types.RequestStatusString) error {
+	return c.client.Set(context.Background(), key, string(value), c.ttl).Err()
 }
 
-func (c *Cache) GetKey(key string) (string, error) {
-	status, err := c.client.Get(context.Background(), key).Result()
+func (c *Cache) GetKey(key string) (*types.RequestStatusString, error) {
+	value, err := c.client.Get(context.Background(), key).Result()
 	if nil != err {
 		if errors.Is(err, redis.Nil) {
-			return "", nil
+			return nil, nil
 		}
 
-		return "", err
+		return nil, err
 	}
 
-	return status, nil
+	status := types.RequestStatusString(value)
+	return &status, nil
 }
