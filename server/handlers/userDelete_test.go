@@ -1,4 +1,5 @@
-//go:build intergration
+//go:build integration
+// +build integration
 
 package handlers
 
