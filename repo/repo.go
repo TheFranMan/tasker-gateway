@@ -17,7 +17,7 @@ import (
 
 type Interface interface {
 	NewDelete(authToken string, id int) (string, error)
-	GetStatus(token string) (types.RequestStatus, error)
+	GetStatus(token string) (*types.RequestStatusString, error)
 }
 
 type Repo struct {
@@ -85,7 +85,21 @@ func (r *Repo) NewDelete(authToken string, id int) (string, error) {
 	return token, nil
 }
 
-func (r *Repo) GetStatus(token string) (types.RequestStatus, error) {
+func (r *Repo) GetStatus(token string) (*types.RequestStatusString, error) {
+	status, err := r.getStatus(token)
+	if nil != err {
+		return nil, err
+	}
+
+	if -1 == status {
+		return nil, nil
+	}
+
+	statusString := getRequestStatusString(status)
+	return &statusString, nil
+}
+
+func (r *Repo) getStatus(token string) (types.RequestStatus, error) {
 	var status types.RequestStatus
 	err := r.db.Get(&status, "SELECT status FROM requests WHERE token = ?", token)
 	if nil != err {
@@ -97,4 +111,21 @@ func (r *Repo) GetStatus(token string) (types.RequestStatus, error) {
 	}
 
 	return status, nil
+}
+
+func getRequestStatusString(responseStatus types.RequestStatus) types.RequestStatusString {
+	var status types.RequestStatusString
+
+	switch responseStatus {
+	case 0:
+		status = types.RequestStatusStringNew
+	case 1:
+		status = types.RequestStatusStringInProgress
+	case 2:
+		status = types.RequestStatusStringCompleted
+	case 3:
+		status = types.RequestStatusStringFailed
+	}
+
+	return status
 }
