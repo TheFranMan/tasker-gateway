@@ -1,5 +1,5 @@
-//go:build intergration
-// +build intergration
+//go:build integration
+// +build integration
 
 package handlers
 
@@ -147,21 +147,21 @@ func (s *Suite) TestStatus() {
 	})
 
 	s.Run("unknown token returns a 404", func() {
-		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
+		s.importFile("general_requests.sql")
+
+		testToken := "71479280-5ace-4f8c-85f0-b3dacc5fb400"
 		var testStatus *types.RequestStatusString
 
 		mockCache := new(cache.Mock)
 		mockCache.On("GetKey", testToken).Return(testStatus, nil)
 		mockMonitor := new(monitor.Mock)
-		mockRepo := new(repo.Mock)
-		mockRepo.On("GetStatus", testToken).Return(nil, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
 		r = mux.SetURLVars(r, map[string]string{"token": testToken})
 
 		h := Handlers{&application.App{
-			Repo:    mockRepo,
+			Repo:    s.repo,
 			Cache:   mockCache,
 			Monitor: mockMonitor,
 		}}
@@ -173,7 +173,6 @@ func (s *Suite) TestStatus() {
 
 		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
-		mockRepo.AssertExpectations(s.T())
 	})
 
 	s.Run("error setting the status in cache", func() {
@@ -212,7 +211,9 @@ func (s *Suite) TestStatus() {
 	})
 
 	s.Run("can successfully send the response token retrieved from the db", func() {
-		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
+		s.importFile("general_requests.sql")
+
+		testToken := "5ca98a2c-0abe-4bc1-9020-f285ada30224"
 		var testStatusCache *types.RequestStatusString
 		testStatus := types.RequestStatusStringCompleted
 
@@ -220,15 +221,13 @@ func (s *Suite) TestStatus() {
 		mockCache.On("GetKey", testToken).Return(testStatusCache, nil)
 		mockCache.On("SetKey", testToken, testStatus).Return(nil)
 		mockMonitor := new(monitor.Mock)
-		mockRepo := new(repo.Mock)
-		mockRepo.On("GetStatus", testToken).Return(&testStatus, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
 		r = mux.SetURLVars(r, map[string]string{"token": testToken})
 
 		h := Handlers{&application.App{
-			Repo:    mockRepo,
+			Repo:    s.repo,
 			Cache:   mockCache,
 			Monitor: mockMonitor,
 		}}
@@ -244,6 +243,5 @@ func (s *Suite) TestStatus() {
 
 		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
-		mockRepo.AssertExpectations(s.T())
 	})
 }

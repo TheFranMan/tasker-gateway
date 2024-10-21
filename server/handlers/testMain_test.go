@@ -109,12 +109,16 @@ func (s *Suite) TearDownSuite() {
 	}
 }
 
-func (s *Suite) AfterTest() {
+func (s *Suite) TearDownTest() {
+	s.importFile("truncate.sql")
+}
+
+func (s *Suite) TearDownSubTest() {
 	s.importFile("truncate.sql")
 }
 
 func (s *Suite) importFile(filename string) {
-	b, err := os.ReadFile("./repo/testdata/" + filename)
+	b, err := os.ReadFile("./testdata/" + filename)
 	if nil != err {
 		s.FailNowf(err.Error(), "cannot open SQL file: %s", filename)
 	}
