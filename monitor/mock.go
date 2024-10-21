@@ -10,6 +10,10 @@ func (m *Mock) PathStatusCode(path string, code int) {
 	m.Called(path, code)
 }
 
-func (m *Mock) PathStatusCached() {
+func (m *Mock) StatusCacheHit() {
+	m.Called()
+}
+
+func (m *Mock) StatusCacheMiss() {
 	m.Called()
 }

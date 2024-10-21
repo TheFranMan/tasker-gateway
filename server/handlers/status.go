@@ -24,6 +24,9 @@ type statusResponse struct {
 }
 
 func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
+	timer := h.app.Monitor.StatusDurationStart()
+	defer h.app.Monitor.StatusDurationEnd(timer)
+
 	token := mux.Vars(r)["token"]
 	if !common.ValidToken(token) {
 		http.Error(w, errMsgInvalidToken, http.StatusBadRequest)
@@ -41,7 +44,7 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 	if nil != status {
 		l.WithField("status", *status).Debug("Cache hit")
 
-		h.app.Monitor.PathStatusCached()
+		h.app.Monitor.StatusCacheHit()
 
 		err = sendResponse(w, *status)
 		if nil != err {
@@ -51,6 +54,8 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	h.app.Monitor.StatusCacheMiss()
 
 	status, err = h.app.Repo.GetStatus(token)
 	if nil != err {
