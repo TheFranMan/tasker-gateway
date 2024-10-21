@@ -25,7 +25,7 @@ import (
 var errTest = errors.New("test error")
 
 func (s *Suite) TestStatus() {
-	s.Run("Invalid token returns a 400 status code", func() {
+	s.Run("invalid token returns a 400 status code", func() {
 		mockCache := new(cache.Mock)
 		mockMonitor := new(monitor.Mock)
 		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
@@ -54,7 +54,7 @@ func (s *Suite) TestStatus() {
 		mockMonitor.AssertExpectations(s.T())
 	})
 
-	s.Run("Error when retrieving from the cache returns a 500 status code", func() {
+	s.Run("error when retrieving from the cache returns a 500 status code", func() {
 		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
 		var testStatus types.RequestStatusString
 
@@ -88,7 +88,7 @@ func (s *Suite) TestStatus() {
 		mockMonitor.AssertExpectations(s.T())
 	})
 
-	s.Run("A successfull cache hit responds with the status", func() {
+	s.Run("a successfull cache hit responds with the status", func() {
 		testStatus := types.RequestStatusString("test-status")
 		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
 
@@ -124,7 +124,7 @@ func (s *Suite) TestStatus() {
 		mockMonitor.AssertExpectations(s.T())
 	})
 
-	s.Run("Error when retrieving the status from the repo", func() {
+	s.Run("error when retrieving the status from the repo", func() {
 		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
 		var testStatus *types.RequestStatusString
 
