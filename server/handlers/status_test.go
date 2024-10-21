@@ -13,6 +13,8 @@ import (
 
 	"github.com/TheFranMan/tasker-common/types"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/stretchr/testify/mock"
 
 	"gateway/application"
 	"gateway/cache"
@@ -26,6 +28,8 @@ func (s *Suite) TestStatus() {
 	s.Run("Invalid token returns a 400 status code", func() {
 		mockCache := new(cache.Mock)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/nope", nil)
@@ -57,6 +61,8 @@ func (s *Suite) TestStatus() {
 		mockCache := new(cache.Mock)
 		mockCache.On("GetKey", testToken).Return(&testStatus, errTest)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
@@ -89,7 +95,9 @@ func (s *Suite) TestStatus() {
 		mockCache := new(cache.Mock)
 		mockCache.On("GetKey", testToken).Return(&testStatus, nil)
 		mockMonitor := new(monitor.Mock)
-		mockMonitor.On("PathStatusCached")
+		mockMonitor.On("StatusCacheHit")
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
@@ -123,6 +131,9 @@ func (s *Suite) TestStatus() {
 		mockCache := new(cache.Mock)
 		mockCache.On("GetKey", testToken).Return(testStatus, nil)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusCacheMiss")
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 		mockRepo := new(repo.Mock)
 		mockRepo.On("GetStatus", testToken).Return(nil, errTest)
 
@@ -155,6 +166,9 @@ func (s *Suite) TestStatus() {
 		mockCache := new(cache.Mock)
 		mockCache.On("GetKey", testToken).Return(testStatus, nil)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusCacheMiss")
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
@@ -184,6 +198,9 @@ func (s *Suite) TestStatus() {
 		mockCache.On("GetKey", testToken).Return(testStatusCache, nil)
 		mockCache.On("SetKey", testToken, testStatus).Return(errTest)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusCacheMiss")
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 		mockRepo := new(repo.Mock)
 		mockRepo.On("GetStatus", testToken).Return(&testStatus, nil)
 
@@ -221,6 +238,9 @@ func (s *Suite) TestStatus() {
 		mockCache.On("GetKey", testToken).Return(testStatusCache, nil)
 		mockCache.On("SetKey", testToken, testStatus).Return(nil)
 		mockMonitor := new(monitor.Mock)
+		mockMonitor.On("StatusCacheMiss")
+		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
+		mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest(http.MethodGet, "/status/"+testToken, nil)
