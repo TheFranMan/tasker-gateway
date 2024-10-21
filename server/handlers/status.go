@@ -13,10 +13,10 @@ import (
 
 var (
 	errMsgInvalidToken   = "Invalid token"
-	errMsgStatusGet      = "cannot retrieve status from token"
+	errMsgStatusGet      = "cannot retrieve status from repo"
 	errMsgResponseStatus = "cannot marshall token status reponse"
-	errMsgCacheSave      = "cannot save to the cache"
-	errMsgCacheGet       = "cannot retrieve from the cache"
+	errMsgCacheSave      = "cannot save status to the cache"
+	errMsgCacheGet       = "cannot retrieve status from the cache"
 )
 
 type statusResponse struct {
@@ -25,14 +25,12 @@ type statusResponse struct {
 
 func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 	token := mux.Vars(r)["token"]
-
 	if !common.ValidToken(token) {
 		http.Error(w, errMsgInvalidToken, http.StatusBadRequest)
 		return
 	}
 
 	l := log.WithField("token", token)
-
 	status, err := h.app.Cache.GetKey(token)
 	if nil != err {
 		l.WithError(err).Error(errMsgCacheGet)
@@ -47,6 +45,7 @@ func (h *Handlers) Status(w http.ResponseWriter, r *http.Request) {
 
 		err = sendResponse(w, *status)
 		if nil != err {
+			l.WithError(err).Error(errMsgResponseStatus)
 			http.Error(w, errMsgResponseStatus, http.StatusInternalServerError)
 		}
 
