@@ -41,73 +41,73 @@ func TestConfig(t *testing.T) {
 			{
 				env: "Prod",
 				want: Envs{
-					isLocal: false,
-					isStage: false,
-					isProd:  true,
+					IsLocal: false,
+					IsStage: false,
+					IsProd:  true,
 				},
 			},
 			{
 				env: "prod",
 				want: Envs{
-					isLocal: false,
-					isStage: false,
-					isProd:  true,
+					IsLocal: false,
+					IsStage: false,
+					IsProd:  true,
 				},
 			},
 			{
 				env: "Production",
 				want: Envs{
-					isLocal: false,
-					isStage: false,
-					isProd:  true,
+					IsLocal: false,
+					IsStage: false,
+					IsProd:  true,
 				},
 			},
 			{
 				env: "Stage",
 				want: Envs{
-					isLocal: false,
-					isStage: true,
-					isProd:  false,
+					IsLocal: false,
+					IsStage: true,
+					IsProd:  false,
 				},
 			},
 			{
 				env: "stage",
 				want: Envs{
-					isLocal: false,
-					isStage: true,
-					isProd:  false,
+					IsLocal: false,
+					IsStage: true,
+					IsProd:  false,
 				},
 			},
 			{
 				env: "Staging",
 				want: Envs{
-					isLocal: false,
-					isStage: true,
-					isProd:  false,
+					IsLocal: false,
+					IsStage: true,
+					IsProd:  false,
 				},
 			},
 			{
 				env: "Local",
 				want: Envs{
-					isLocal: true,
-					isStage: false,
-					isProd:  false,
+					IsLocal: true,
+					IsStage: false,
+					IsProd:  false,
 				},
 			},
 			{
 				env: "Dev",
 				want: Envs{
-					isLocal: true,
-					isStage: false,
-					isProd:  false,
+					IsLocal: true,
+					IsStage: false,
+					IsProd:  false,
 				},
 			},
 			{
 				env: "",
 				want: Envs{
-					isLocal: true,
-					isStage: false,
-					isProd:  false,
+					IsLocal: true,
+					IsStage: false,
+					IsProd:  false,
 				},
 			},
 		} {
@@ -117,9 +117,9 @@ func TestConfig(t *testing.T) {
 				cfg, err := GetConfig()
 				require.Nil(t, err)
 
-				require.Equal(t, test.want.isLocal, cfg.isLocal)
-				require.Equal(t, test.want.isStage, cfg.isStage)
-				require.Equal(t, test.want.isProd, cfg.isProd)
+				require.Equal(t, test.want.IsLocal, cfg.IsLocal)
+				require.Equal(t, test.want.IsStage, cfg.IsStage)
+				require.Equal(t, test.want.IsProd, cfg.IsProd)
 
 				os.Unsetenv("ENV")
 			})

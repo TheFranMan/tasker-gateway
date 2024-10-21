@@ -11,9 +11,9 @@ import (
 )
 
 type Envs struct {
-	isLocal bool
-	isStage bool
-	isProd  bool
+	IsLocal bool
+	IsStage bool
+	IsProd  bool
 }
 
 type Config struct {
@@ -48,22 +48,22 @@ func GetConfig() (*Config, error) {
 
 func (c *Config) setEnv() {
 	if strings.HasPrefix(strings.ToLower(c.Env), "prod") {
-		c.isLocal = false
-		c.isStage = false
-		c.isProd = true
+		c.IsLocal = false
+		c.IsStage = false
+		c.IsProd = true
 		return
 	}
 
 	if strings.HasPrefix(strings.ToLower(c.Env), "stag") {
-		c.isLocal = false
-		c.isStage = true
-		c.isProd = false
+		c.IsLocal = false
+		c.IsStage = true
+		c.IsProd = false
 		return
 	}
 
-	c.isLocal = true
-	c.isStage = false
-	c.isProd = false
+	c.IsLocal = true
+	c.IsStage = false
+	c.IsProd = false
 }
 
 func (c *Config) setLogging() {
@@ -74,7 +74,7 @@ func (c *Config) setLogging() {
 
 	log.SetLevel(log.InfoLevel)
 
-	if c.isLocal {
+	if c.IsLocal {
 		log.SetLevel(log.DebugLevel)
 	}
 }
