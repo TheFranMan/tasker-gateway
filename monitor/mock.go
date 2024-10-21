@@ -1,6 +1,9 @@
 package monitor
 
-import "github.com/stretchr/testify/mock"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/stretchr/testify/mock"
+)
 
 type Mock struct {
 	mock.Mock
@@ -16,4 +19,13 @@ func (m *Mock) StatusCacheHit() {
 
 func (m *Mock) StatusCacheMiss() {
 	m.Called()
+}
+
+func (m *Mock) StatusDurationStart() *prometheus.Timer {
+	args := m.Called()
+	return args.Get(0).(*prometheus.Timer)
+}
+
+func (m *Mock) StatusDurationEnd(timer *prometheus.Timer) {
+	m.Called(timer)
 }
