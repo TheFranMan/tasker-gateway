@@ -32,6 +32,13 @@ func New(config *common.Config) *Cache {
 	}
 }
 
+func NewWithClient(client *redis.Client, config *common.Config) *Cache {
+	return &Cache{
+		client: client,
+		ttl:    config.RedisKeyTtl,
+	}
+}
+
 func (c *Cache) SetKey(key string, value types.RequestStatusString) error {
 	return c.client.Set(context.Background(), key, string(value), c.ttl).Err()
 }

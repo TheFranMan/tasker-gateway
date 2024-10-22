@@ -4,6 +4,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -92,8 +93,8 @@ func (s *Suite) TestStatus() {
 		testStatus := types.RequestStatusString("test-status")
 		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
 
-		mockCache := new(cache.Mock)
-		mockCache.On("GetKey", testToken).Return(&testStatus, nil)
+		s.cache.SetKey(testToken, testStatus)
+
 		mockMonitor := new(monitor.Mock)
 		mockMonitor.On("StatusCacheHit")
 		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
@@ -105,7 +106,7 @@ func (s *Suite) TestStatus() {
 
 		h := Handlers{&application.App{
 			Repo:    s.repo,
-			Cache:   mockCache,
+			Cache:   s.cache,
 			Monitor: mockMonitor,
 		}}
 
@@ -120,16 +121,14 @@ func (s *Suite) TestStatus() {
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)
 
-		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
 	})
 
 	s.Run("error when retrieving the status from the repo", func() {
 		testToken := "e96b72b8-fe24-46b8-8525-280fac1032fd"
-		var testStatus *types.RequestStatusString
 
-		mockCache := new(cache.Mock)
-		mockCache.On("GetKey", testToken).Return(testStatus, nil)
+		s.cache.SetKey("unknown", types.RequestStatusStringCompleted)
+
 		mockMonitor := new(monitor.Mock)
 		mockMonitor.On("StatusCacheMiss")
 		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
@@ -143,7 +142,7 @@ func (s *Suite) TestStatus() {
 
 		h := Handlers{&application.App{
 			Repo:    mockRepo,
-			Cache:   mockCache,
+			Cache:   s.cache,
 			Monitor: mockMonitor,
 		}}
 
@@ -152,7 +151,6 @@ func (s *Suite) TestStatus() {
 		result := w.Result()
 		s.Require().Equal(http.StatusInternalServerError, result.StatusCode)
 
-		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
 		mockRepo.AssertExpectations(s.T())
 	})
@@ -161,10 +159,7 @@ func (s *Suite) TestStatus() {
 		s.importFile("general_requests.sql")
 
 		testToken := "71479280-5ace-4f8c-85f0-b3dacc5fb400"
-		var testStatus *types.RequestStatusString
 
-		mockCache := new(cache.Mock)
-		mockCache.On("GetKey", testToken).Return(testStatus, nil)
 		mockMonitor := new(monitor.Mock)
 		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
 		mockMonitor.On("StatusCacheMiss")
@@ -176,7 +171,7 @@ func (s *Suite) TestStatus() {
 
 		h := Handlers{&application.App{
 			Repo:    s.repo,
-			Cache:   mockCache,
+			Cache:   s.cache,
 			Monitor: mockMonitor,
 		}}
 
@@ -185,7 +180,6 @@ func (s *Suite) TestStatus() {
 		result := w.Result()
 		s.Require().Equal(http.StatusNotFound, result.StatusCode)
 
-		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
 	})
 
@@ -231,12 +225,8 @@ func (s *Suite) TestStatus() {
 		s.importFile("general_requests.sql")
 
 		testToken := "5ca98a2c-0abe-4bc1-9020-f285ada30224"
-		var testStatusCache *types.RequestStatusString
 		testStatus := types.RequestStatusStringCompleted
 
-		mockCache := new(cache.Mock)
-		mockCache.On("GetKey", testToken).Return(testStatusCache, nil)
-		mockCache.On("SetKey", testToken, testStatus).Return(nil)
 		mockMonitor := new(monitor.Mock)
 		mockMonitor.On("StatusCacheMiss")
 		mockMonitor.On("StatusDurationStart").Return(&prometheus.Timer{})
@@ -248,7 +238,7 @@ func (s *Suite) TestStatus() {
 
 		h := Handlers{&application.App{
 			Repo:    s.repo,
-			Cache:   mockCache,
+			Cache:   s.cache,
 			Monitor: mockMonitor,
 		}}
 
@@ -256,12 +246,16 @@ func (s *Suite) TestStatus() {
 
 		result := w.Result()
 		s.Require().Equal(http.StatusOK, result.StatusCode)
+
+		redisRes, err := s.redis.Get(context.Background(), testToken).Result()
+		s.Require().Nil(err)
+		s.Require().Equal(string(testStatus), redisRes)
+
 		var body statusResponse
-		err := json.NewDecoder(result.Body).Decode(&body)
+		err = json.NewDecoder(result.Body).Decode(&body)
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)
 
-		mockCache.AssertExpectations(s.T())
 		mockMonitor.AssertExpectations(s.T())
 	})
 }
