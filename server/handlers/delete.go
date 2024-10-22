@@ -20,11 +20,6 @@ var (
 func (h *Handlers) Delete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
-	if "application/json" != r.Header.Get("Content-Type") {
-		http.Error(w, errContentType, http.StatusUnsupportedMediaType)
-		return
-	}
-
 	var deleteParams DeleteParams
 	err := json.NewDecoder(r.Body).Decode(&deleteParams)
 	if nil != err {
@@ -45,7 +40,6 @@ func (h *Handlers) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(TokenResponse{token})
 	if nil != err {
