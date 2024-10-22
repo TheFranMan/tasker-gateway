@@ -25,7 +25,7 @@ import (
 
 var errTest = errors.New("test error")
 
-func (s *Suite) Test_status() {
+func (s *Suite) Test_poll_handler() {
 	s.Run("invalid token returns a 400 status code", func() {
 		mockCache := new(cache.Mock)
 		mockMonitor := new(monitor.Mock)
