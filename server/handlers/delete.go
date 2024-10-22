@@ -14,7 +14,6 @@ var (
 	errDeleteSave     = "cannot save new deletion request"
 	errDeseraliseJSON = "cannot deseralise JSON body"
 	errInvalidID      = "invalid ID"
-	errContentType    = "invalid content type"
 )
 
 func (h *Handlers) Delete(w http.ResponseWriter, r *http.Request) {
