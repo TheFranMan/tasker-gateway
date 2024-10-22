@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/TheFranMan/tasker-common/types"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
@@ -42,7 +41,9 @@ func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
 
 		h.app.Monitor.StatusCacheHit()
 
-		err = sendResponse(w, *status)
+		err = json.NewEncoder(w).Encode(pollResponse{
+			Status: *status,
+		})
 		if nil != err {
 			l.WithError(err).Error(errMsgResponseStatus)
 			http.Error(w, errMsgResponseStatus, http.StatusInternalServerError)
@@ -72,15 +73,11 @@ func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = sendResponse(w, *status)
+	err = json.NewEncoder(w).Encode(pollResponse{
+		Status: *status,
+	})
 	if nil != err {
 		l.WithError(err).Error(errMsgResponseStatus)
 		http.Error(w, errMsgResponseStatus, http.StatusInternalServerError)
 	}
-}
-
-func sendResponse(w http.ResponseWriter, status types.RequestStatusString) error {
-	return json.NewEncoder(w).Encode(pollResponse{
-		Status: status,
-	})
 }
