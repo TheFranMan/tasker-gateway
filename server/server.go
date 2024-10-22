@@ -32,7 +32,7 @@ func New(app *application.App) *Server {
 	api.Use(monitor.Record)
 
 	api.HandleFunc("/user", h.Delete).Methods(http.MethodDelete)
-	api.HandleFunc("/status/{token}", h.Status).Methods(http.MethodGet)
+	api.HandleFunc("/poll/{token}", h.Poll).Methods(http.MethodGet)
 
 	return &Server{
 		router: r,

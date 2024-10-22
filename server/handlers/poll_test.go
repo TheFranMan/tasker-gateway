@@ -41,7 +41,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusBadRequest, result.StatusCode)
@@ -75,7 +75,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusInternalServerError, result.StatusCode)
@@ -110,13 +110,13 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusOK, result.StatusCode)
 
 		defer result.Body.Close()
-		var body statusResponse
+		var body pollResponse
 		err := json.NewDecoder(result.Body).Decode(&body)
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)
@@ -146,7 +146,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusInternalServerError, result.StatusCode)
@@ -175,7 +175,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusNotFound, result.StatusCode)
@@ -208,7 +208,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusInternalServerError, result.StatusCode)
@@ -242,7 +242,7 @@ func (s *Suite) Test_status() {
 			Monitor: mockMonitor,
 		}}
 
-		h.Status(w, r)
+		h.Poll(w, r)
 
 		result := w.Result()
 		s.Require().Equal(http.StatusOK, result.StatusCode)
@@ -251,7 +251,7 @@ func (s *Suite) Test_status() {
 		s.Require().Nil(err)
 		s.Require().Equal(string(testStatus), redisRes)
 
-		var body statusResponse
+		var body pollResponse
 		err = json.NewDecoder(result.Body).Decode(&body)
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)
