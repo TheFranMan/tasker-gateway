@@ -31,7 +31,7 @@ func (s *Suite) Test_can_add_a_request() {
 	r.Header.Set("Authorization", "test-token")
 	r.Header.Set("Content-Type", "application/json")
 
-	h.UserDelete(w, r)
+	h.Delete(w, r)
 
 	s.Require().Equal(http.StatusCreated, w.Result().StatusCode)
 

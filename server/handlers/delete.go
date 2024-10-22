@@ -17,7 +17,7 @@ var (
 	errContentType    = "invalid content type"
 )
 
-func (h *Handlers) UserDelete(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) Delete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if "application/json" != r.Header.Get("Content-Type") {
