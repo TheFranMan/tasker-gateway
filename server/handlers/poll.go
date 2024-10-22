@@ -80,7 +80,6 @@ func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendResponse(w http.ResponseWriter, status types.RequestStatusString) error {
-	w.Header().Add("Content-type", "application/json")
 	return json.NewEncoder(w).Encode(pollResponse{
 		Status: status,
 	})
