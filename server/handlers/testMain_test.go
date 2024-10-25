@@ -5,8 +5,6 @@ package handlers
 
 import (
 	"context"
-	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -141,29 +139,10 @@ func (s *Suite) TearDownSubTest() {
 }
 
 func (s *Suite) cleanUp() {
-	s.importFile("truncate.sql")
+	commonTest.ImportFile(s.T(), s.db.DB, "truncate.sql")
 
 	_, err := s.redis.FlushDB(context.Background()).Result()
 	if nil != err {
 		s.FailNowf(err.Error(), "cannot flush Redis dbs")
-	}
-}
-func (s *Suite) importFile(filename string) {
-	b, err := os.ReadFile("./testdata/" + filename)
-	if nil != err {
-		s.FailNowf(err.Error(), "cannot open SQL file: %s", filename)
-	}
-
-	statements := strings.Split(strings.TrimSpace(string(b)), ";")
-
-	for _, statement := range statements {
-		if 0 == len(statement) {
-			continue
-		}
-
-		_, err := s.db.Exec(statement + ";")
-		if nil != err {
-			s.FailNowf(err.Error(), "cannot run SQL statement: %s", statement)
-		}
 	}
 }

@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
+	commonTest "github.com/TheFranMan/go-common/testing"
 	"github.com/TheFranMan/tasker-common/types"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
@@ -156,7 +157,7 @@ func (s *Suite) Test_poll_handler() {
 	})
 
 	s.Run("unknown token returns a 404", func() {
-		s.importFile("general_requests.sql")
+		commonTest.ImportFile(s.T(), s.db.DB, "general_requests.sql")
 
 		testToken := "71479280-5ace-4f8c-85f0-b3dacc5fb400"
 
@@ -222,7 +223,7 @@ func (s *Suite) Test_poll_handler() {
 	})
 
 	s.Run("can successfully send the response token retrieved from the db", func() {
-		s.importFile("general_requests.sql")
+		commonTest.ImportFile(s.T(), s.db.DB, "general_requests.sql")
 
 		testToken := "5ca98a2c-0abe-4bc1-9020-f285ada30224"
 		testStatus := types.RequestStatusStringCompleted
