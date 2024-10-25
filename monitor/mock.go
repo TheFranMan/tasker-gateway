@@ -22,8 +22,8 @@ func (m *Mock) StatusCacheMiss() {
 }
 
 func (m *Mock) StatusDurationStart() *prometheus.Timer {
-	args := m.Called()
-	return args.Get(0).(*prometheus.Timer)
+	m.Called()
+	return &prometheus.Timer{}
 }
 
 func (m *Mock) StatusDurationEnd(timer *prometheus.Timer) {
