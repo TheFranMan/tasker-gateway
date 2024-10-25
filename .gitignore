@@ -1,6 +1,7 @@
 .DS_Store
 .env
 .vscode
+*.out
 go.work
 go.work.sum
 __pycache__
