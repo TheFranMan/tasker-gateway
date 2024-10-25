@@ -10,6 +10,6 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
-type pollResponse struct {
+type PollResponse struct {
 	Status types.RequestStatusString `json:"status"`
 }

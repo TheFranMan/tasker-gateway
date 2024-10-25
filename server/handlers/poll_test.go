@@ -116,7 +116,7 @@ func (s *Suite) Test_poll_handler() {
 		s.Require().Equal(http.StatusOK, result.StatusCode)
 
 		defer result.Body.Close()
-		var body pollResponse
+		var body PollResponse
 		err := json.NewDecoder(result.Body).Decode(&body)
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)
@@ -251,7 +251,7 @@ func (s *Suite) Test_poll_handler() {
 		s.Require().Nil(err)
 		s.Require().Equal(string(testStatus), redisRes)
 
-		var body pollResponse
+		var body PollResponse
 		err = json.NewDecoder(result.Body).Decode(&body)
 		s.Require().Nil(err)
 		s.Require().Equal(testStatus, body.Status)

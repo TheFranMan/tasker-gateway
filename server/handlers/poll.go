@@ -41,7 +41,7 @@ func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
 
 		h.app.Monitor.StatusCacheHit()
 
-		err = json.NewEncoder(w).Encode(pollResponse{
+		err = json.NewEncoder(w).Encode(PollResponse{
 			Status: *status,
 		})
 		if nil != err {
@@ -73,7 +73,7 @@ func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(pollResponse{
+	err = json.NewEncoder(w).Encode(PollResponse{
 		Status: *status,
 	})
 	if nil != err {
