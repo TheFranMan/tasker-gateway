@@ -3,7 +3,7 @@ module gateway
 go 1.23.0
 
 require (
-	github.com/TheFranMan/go-common v0.0.0-20241023163709-70b19590cb7f
+	github.com/TheFranMan/go-common v0.0.0-20241025122203-e05ebed207de
 	github.com/TheFranMan/tasker-common v0.0.0-20241013123431-b909e3a862ee
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/go-sql-driver/mysql v1.8.1
@@ -58,5 +58,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools v2.2.0+incompatible // indirect
 )
-
-replace github.com/TheFranMan/go-common => /Users/francis/projects/apps/go-common
