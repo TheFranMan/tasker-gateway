@@ -5,12 +5,12 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strings"
 	"testing"
 	"time"
 
+	commonTest "github.com/TheFranMan/go-common/testing"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	migMysql "github.com/golang-migrate/migrate/v4/database/mysql"
@@ -53,10 +53,9 @@ func (s *Suite) SetupSuite() {
 		s.FailNowf(err.Error(), "cannot ping dockertest client")
 	}
 
-	s.resources = map[string]*dockertest.Resource{}
+	var resourceExpire uint = 60 * 1
 
-	// Mysql
-	my, err := s.pool.RunWithOptions(&dockertest.RunOptions{
+	mysqlResource, mysqlDb, err := commonTest.GetDockerMysql(s.pool, dockertest.RunOptions{
 		Repository: "mysql",
 		Tag:        "8.0",
 		Env: []string{
@@ -67,28 +66,12 @@ func (s *Suite) SetupSuite() {
 		config.RestartPolicy = docker.RestartPolicy{
 			Name: "no",
 		}
-	})
+	}, resourceExpire)
 	if nil != err {
-		s.FailNowf(err.Error(), "cannot create dockertest mysql s.resource")
+		s.FailNowf(err.Error(), "cannot create MySQL container")
 	}
 
-	err = s.pool.Retry(func() error {
-		var err error
-		s.db, err = sqlx.Open("mysql", fmt.Sprintf("root:secret@(localhost:%s)/mysql?parseTime=true", my.GetPort("3306/tcp")))
-		if err != nil {
-			return err
-		}
-
-		return s.db.Ping()
-	})
-	if nil != err {
-		s.FailNowf(err.Error(), "cannot open dockertest mysql connection")
-	}
-
-	s.resources["mysql"] = my
-
-	// Redis
-	red, err := s.pool.RunWithOptions(&dockertest.RunOptions{
+	redisResource, redisClient, err := commonTest.GetDockerRedis(s.pool, dockertest.RunOptions{
 		Repository: "redis",
 		Tag:        "7",
 		Env:        []string{},
@@ -97,31 +80,18 @@ func (s *Suite) SetupSuite() {
 		config.RestartPolicy = docker.RestartPolicy{
 			Name: "no",
 		}
-	})
-	if nil != err {
-		s.FailNowf(err.Error(), "cannot create dockertest redis container")
-	}
-
-	err = s.pool.Retry(func() error {
-		var err error
-		s.redis = redis.NewClient(&redis.Options{
-			Addr:     "localhost:" + red.GetPort("6379/tcp"),
-			Password: "",
-			DB:       0,
-		})
-
-		_, err = s.redis.Ping(context.Background()).Result()
-		return err
-	})
+	}, resourceExpire)
 	if nil != err {
 		s.FailNowf(err.Error(), "cannot open dockertest redis connection")
 	}
 
-	s.resources["redis"] = red
+	s.resources = map[string]*dockertest.Resource{}
 
-	for _, resource := range s.resources {
-		resource.Expire(60 * 1)
-	}
+	s.db = mysqlDb
+	s.redis = redisClient
+
+	s.resources["mysql"] = mysqlResource
+	s.resources["redis"] = redisResource
 
 	// Migrations
 	driver, err := migMysql.WithInstance(s.db.DB, &migMysql.Config{})
