@@ -179,7 +179,7 @@ func (s *Suite) Test_can_make_a_delete_request_and_poll_the_resulting_token_to_r
 	}))
 	defer ts.Close()
 
-	req, err := http.NewRequest(http.MethodDelete, ts.URL+"/api/user", strings.NewReader(`{"id": 1}`))
+	req, err := http.NewRequest(http.MethodPost, ts.URL+"/api/user", strings.NewReader(`{"id": 1}`))
 	s.Require().Nil(err)
 
 	req.Header.Add("Content-type", "application/json")

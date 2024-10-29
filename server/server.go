@@ -31,7 +31,7 @@ func New(app *application.App) *Server {
 	api.Use(auth.Guard)
 	api.Use(monitor.Record)
 
-	api.HandleFunc("/user", h.Delete).Methods(http.MethodDelete)
+	api.HandleFunc("/user", h.Delete).Methods(http.MethodPost)
 	api.HandleFunc("/poll/{token}", h.Poll).Methods(http.MethodGet)
 
 	return &Server{
