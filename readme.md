@@ -43,7 +43,7 @@ The <a href="https://locust.io/" target="_blank">locust</a> application is a Pyt
 This will bring up a web UI located at <a href="http://0.0.0.0:8089" target="_blank">http://0.0.0.0:8089</a> where you can specify the parameters of the test. The tests are located in the file `locustfile.py` in the root dir.
 
 ## Monitoring
-Monitoring is supplied via Prometheus and using a Grafana dashboard at <a href="http://localhost:3021/" target="_blank">http://localhost:3021/</a>. The username and password are both `admin`. The dashboard can be imported using the file `grafana-dashboard.json` in the root dir.
+Monitoring is supplied via Prometheus and using a Grafana dashboard at <a href="http://localhost:3021/" target="_blank">http://localhost:3021/</a>. The username and password are both `admin`. The dashboard can be imported using the file `./data/grafana/dashboard.json` in the root dir.
 
 ## Routes
    * `GET /heartbeat`
