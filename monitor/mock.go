@@ -21,8 +21,8 @@ func (m *Mock) StatusCacheMiss() {
 	m.Called()
 }
 
-func (m *Mock) StatusDurationStart() *prometheus.Timer {
-	m.Called()
+func (m *Mock) StatusDurationStart(path string) *prometheus.Timer {
+	m.Called(path)
 	return &prometheus.Timer{}
 }
 

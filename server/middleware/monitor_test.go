@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/mock"
 )
 
 func Test_monitor(t *testing.T) {
@@ -15,31 +17,26 @@ func Test_monitor(t *testing.T) {
 		statusCode int
 	}{
 		"can record a 200 response": {
-			path:       "/test",
-			recordPath: "/test",
+			path:       "/api/test",
+			recordPath: "/api/test",
 			statusCode: http.StatusOK,
 		},
 		"can record a non 200 response": {
-			path:       "/test",
-			recordPath: "/test",
+			path:       "/api/test",
+			recordPath: "/api/test",
 			statusCode: http.StatusNotFound,
 		},
-		"a /status/token path is shortend to /status": {
-			path:       "/status/token",
-			recordPath: "/status",
-			statusCode: http.StatusOK,
-		},
-		"a path on the whitelist is not recorded": {
-			path:       "/metrics",
+		"a /api/poll/token path is shortend to /status": {
+			path:       "/api/poll/token",
+			recordPath: "/api/poll",
 			statusCode: http.StatusOK,
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			mockMonitor := new(monitor.Mock)
-
-			if "" != test.recordPath && 0 != test.statusCode {
-				mockMonitor.On("PathStatusCode", test.recordPath, test.statusCode)
-			}
+			mockMonitor.On("PathStatusCode", test.recordPath, test.statusCode)
+			mockMonitor.On("StatusDurationStart", test.recordPath)
+			mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 			m := NewMonitor(&application.App{
 				Monitor: mockMonitor,

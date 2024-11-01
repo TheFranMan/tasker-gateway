@@ -10,7 +10,7 @@ type Interface interface {
 	PathStatusCode(path string, code int)
 	StatusCacheHit()
 	StatusCacheMiss()
-	StatusDurationStart() *prometheus.Timer
+	StatusDurationStart(path string) *prometheus.Timer
 	StatusDurationEnd(timer *prometheus.Timer)
 }
 
@@ -18,7 +18,7 @@ type Monitor struct {
 	pathStatusCodes     *prometheus.CounterVec
 	pathStatusCacheHit  prometheus.Counter
 	pathStatusCacheMiss prometheus.Counter
-	pathStatusDuration  prometheus.Histogram
+	pathStatusDuration  *prometheus.HistogramVec
 }
 
 func New() *Monitor {
@@ -37,10 +37,10 @@ func New() *Monitor {
 		Help: "The number of status cache misses",
 	})
 
-	pathStatusDuration := prometheus.NewHistogram(prometheus.HistogramOpts{
+	pathStatusDuration := prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name: "status_http_duration",
 		Help: "The status of the status endpoint in seconds",
-	})
+	}, []string{"path"})
 
 	prometheus.Register(pathStatusCodes)
 	prometheus.Register(pathStatusCacheHit)
@@ -67,8 +67,10 @@ func (m *Monitor) StatusCacheMiss() {
 	m.pathStatusCacheMiss.Inc()
 }
 
-func (m *Monitor) StatusDurationStart() *prometheus.Timer {
-	return prometheus.NewTimer(m.pathStatusDuration)
+func (m *Monitor) StatusDurationStart(path string) *prometheus.Timer {
+	return prometheus.NewTimer(prometheus.ObserverFunc(func(v float64) {
+		m.pathStatusDuration.WithLabelValues(path).Observe(v)
+	}))
 }
 
 func (m *Monitor) StatusDurationEnd(timer *prometheus.Timer) {

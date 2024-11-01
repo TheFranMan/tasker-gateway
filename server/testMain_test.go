@@ -165,7 +165,9 @@ func (s *Suite) Test_can_make_a_delete_request_and_poll_the_resulting_token_to_r
 	mockMonitor.On("PathStatusCode", "/api/user", http.StatusCreated)
 	mockMonitor.On("PathStatusCode", mock.Anything, http.StatusOK)
 	mockMonitor.On("StatusCacheMiss")
-	mockMonitor.On("StatusDurationStart")
+	mockMonitor.On("StatusDurationStart", "/api/poll")
+	mockMonitor.On("StatusDurationStart", "/api/user")
+	mockMonitor.On("StatusDurationEnd", mock.Anything)
 	mockMonitor.On("StatusDurationEnd", mock.Anything)
 
 	ts := httptest.NewServer(New(&application.App{

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"net/http"
-	"slices"
 	"strings"
 
 	"gateway/application"
@@ -19,31 +18,28 @@ func (wr *writerRecorder) WriteHeader(code int) {
 }
 
 type Monitor struct {
-	app       *application.App
-	whitelist []string
+	app *application.App
 }
 
 func NewMonitor(app *application.App) Monitor {
 	return Monitor{
-		app:       app,
-		whitelist: []string{"/metrics"},
+		app: app,
 	}
 }
 
 func (m *Monitor) Record(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if strings.HasPrefix(r.URL.Path, "/api/poll") {
+			path = "/api/poll"
+		}
+
+		timer := m.app.Monitor.StatusDurationStart(path)
+		defer m.app.Monitor.StatusDurationEnd(timer)
+
 		wr := &writerRecorder{w, http.StatusOK}
 
 		next.ServeHTTP(wr, r)
-
-		path := r.URL.Path
-		if strings.HasPrefix(r.URL.Path, "/status") {
-			path = "/status"
-		}
-
-		if slices.Contains(m.whitelist, path) {
-			return
-		}
 
 		m.app.Monitor.PathStatusCode(path, wr.statusCode)
 	})

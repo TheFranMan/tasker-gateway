@@ -19,9 +19,6 @@ var (
 )
 
 func (h *Handlers) Poll(w http.ResponseWriter, r *http.Request) {
-	timer := h.app.Monitor.StatusDurationStart()
-	defer h.app.Monitor.StatusDurationEnd(timer)
-
 	token := mux.Vars(r)["token"]
 	if !common.ValidToken(token) {
 		http.Error(w, errMsgInvalidToken, http.StatusBadRequest)
