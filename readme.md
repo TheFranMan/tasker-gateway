@@ -28,9 +28,9 @@ In the project root, first create a `.env` file with the following env vars belo
 
 
 To run the project sepearte from Docker, and so avaoiding the Docker build step, from the project root follow the below steps:
-   * Comment out the `gateway` block from the `docker-compose.yml` file.
-   * Run `docker compose up -p` to start its dependencies.
-   * Run `go get && go build && ./gateway`
+   1. `docker compose up -p`.
+   2. `docker compose stop gateway`.
+   3. `go get && go build && ./gateway`
 
 ## Testing
 Tests can be run from the root dir using: `go test -v ./... --tags=integration`. The `integration` tag runs the integration tests using Docker. Remove this if you only want to run unit tests.
