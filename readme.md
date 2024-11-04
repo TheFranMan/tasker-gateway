@@ -1,33 +1,33 @@
 # Tasker Gateway
 
-This application serves as an API gateway to the Tasker ecosystem. End users can utilize various APIs to log requests in the tasker backend and then query the status of the request.
+This application serves as an API gateway to the Tasker ecosystem. End users can utilize various APIs to log requests in the tasker backend and query its status.
 
 ## Dependencies
-   * **Mysql**: Persist the requests.
+   * **MySQL**: Persist the requested tasks.
    * **Redis**: Store the status for a token.
    * **Prometheus**: Record metrics.
    * **Grafana**: Visualize the gathered Prometeus metrics.
 
 ## Run
 
-In the project root, first create a `.env` file with the following env vars below. Then run `docker compose up -d`.
+In the project root, first create a `.env` file with the below env vars, then run `docker compose up -d`.
 
 | Name          | Required           | Default | Description                                |
 | ------------- | ------------------ | ------- | ------------------------------------------ |
-| PORT          | :white_check_mark: | n/a     | The port the server runs on.               |
+| PORT          | :white_check_mark: | n/a     | The server port.                           |
 | ENV           | :x:                | n/a     | The enviroment the app is running in.      |
-| DB_USER       | :white_check_mark: | n/a     | The local MySQL user.                      |
-| DB_PASS       | :white_check_mark: | n/a     | The local MySQL password.                  |
-| DB_HOST       | :white_check_mark: | n/a     | The local MySQL host.                      |
-| DB_PORT       | :white_check_mark: | n/a     | The local MySQL port.                      |
-| DB_NAME       | :white_check_mark: | n/a     | The local MySQL database name.             |
+| DB_USER       | :white_check_mark: | n/a     | The MySQL user.                            |
+| DB_PASS       | :white_check_mark: | n/a     | The MySQL password.                        |
+| DB_HOST       | :white_check_mark: | n/a     | The MySQL host.                            |
+| DB_PORT       | :white_check_mark: | n/a     | The MySQL port.                            |
+| DB_NAME       | :white_check_mark: | n/a     | The MySQL database name.                   |
 | AUTH_TOKENS   | :white_check_mark: | n/a     | List of API auth tokens sepearted by a "," |
-| REDIS_ADDR    | :white_check_mark: | n/a     | The local Redis address                    |
+| REDIS_ADDR    | :white_check_mark: | n/a     | The Redis address                          |
 | REDIS_KEY_TTL | :x:                | 30s     | The TTL for the status Redis key           |
 
 
 
-To run the project sepearte from Docker, and so avaoiding the Docker build step, from the project root follow the below steps:
+To run the project separate from Docker, and so avaoiding the Docker build step, from the project root follow the below steps:
    1. `docker compose up -p`.
    2. `docker compose stop gateway`.
    3. `go get && go build && ./gateway`
